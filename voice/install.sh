@@ -4,12 +4,11 @@
 # Requirements: macOS Apple Silicon (M2+)
 # Usage: sudo ./install_spank.sh
 
-set -euo pipefail
+set -eo pipefail
 
 PLIST="/Library/LaunchDaemons/com.taigrr.spank.plist"
 BIN="/usr/local/bin/spank"
-GO_PKG="go1.24.1.darwin-arm64.pkg"
-GO_URL="https://go.dev/dl/$GO_PKG"
+
 
 # ── 0. Require sudo ───────────────────────────────────────────────────────────
 if [[ "$EUID" -ne 0 ]]; then
@@ -33,17 +32,17 @@ fi
 
 # ── 2. Install Go if missing ──────────────────────────────────────────────────
 if ! command -v go &>/dev/null; then
-  echo "⚙️   Go not found — installing via official package…"
+  echo "⚙️   Go not found — installing via Homebrew…"
 
-  TMP_PKG="/tmp/$GO_PKG"
-  echo "📥  Downloading $GO_URL…"
-  curl -fsSL "$GO_URL" -o "$TMP_PKG"
+  if ! command -v brew &>/dev/null; then
+    echo "📥  Homebrew not found — installing…"
+    sudo -u "$REAL_USER" /bin/bash -c \
+      "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    export PATH="/opt/homebrew/bin:$PATH"
+  fi
 
-  echo "📦  Running Go installer…"
-  installer -pkg "$TMP_PKG" -target /
-  rm -f "$TMP_PKG"
-
-  export PATH="/usr/local/go/bin:$PATH"
+  sudo -u "$REAL_USER" env PATH="$PATH" brew install go
+  export PATH="/opt/homebrew/bin:$PATH"
   echo "✅  Go installed: $(go version)"
 else
   echo "✅  Go found: $(go version)"
