@@ -83,8 +83,9 @@ tee "$PLIST" > /dev/null << 'EOF'
     <string>com.taigrr.spank</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/opt/homebrew/bin/spank</string>
-        <string>--sexy</string>
+        <string>/bin/sh</string>
+        <string>-c</string>
+        <string>sleep 60 && /opt/homebrew/bin/spank --sexy</string>
     </array>
     <key>RunAtLoad</key>
     <true/>
