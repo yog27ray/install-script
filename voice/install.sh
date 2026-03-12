@@ -7,7 +7,7 @@
 set -eo pipefail
 
 PLIST="/Library/LaunchDaemons/com.taigrr.spank.plist"
-BIN="/usr/local/bin/spank"
+BIN="/opt/homebrew/bin/spank"
 
 
 # ── 0. Require sudo ───────────────────────────────────────────────────────────
@@ -60,6 +60,7 @@ if [[ ! -f "$GOBIN_PATH" ]]; then
   exit 1
 fi
 
+mkdir -p "$(dirname "$BIN")"
 cp "$GOBIN_PATH" "$BIN"
 chmod +x "$BIN"
 echo "✅  Binary installed at $BIN"
@@ -82,7 +83,7 @@ tee "$PLIST" > /dev/null << 'EOF'
     <string>com.taigrr.spank</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/usr/local/bin/spank</string>
+        <string>/opt/homebrew/bin/spank</string>
         <string>--sexy</string>
     </array>
     <key>RunAtLoad</key>
